@@ -1,34 +1,28 @@
 package ru.job4j.html;
 
 public class Post {
-    private String topic;
-    private String author;
-    private String answers;
-    private String views;
-    private String date;
+    private String name;
+    private String text;
     private String link;
+    private String created;
 
     public Post(String link) {
         this.link = link;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getName() {
+        return name;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getText() {
+        return text;
     }
 
-    public String getAnswers() {
-        return answers;
+    public String getLink() {
+        return link;
     }
 
-    public String getViews() {
-        return views;
-    }
-
-    public String getDate() {
-        return date;
+    public String getCreated() {
+        return created;
     }
 }
