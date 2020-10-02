@@ -10,39 +10,10 @@ import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-
-public class SqlRuParse {
-    public void parseList(String url, int pages) throws IOException, ParseException {
-        String postUrl ;
-        String postName;
-        String postDate;
-
-        int index = 0;
-        while (index < pages) {
-            String PageUrl = url + (index + 1); //"https://www.sql.ru/forum/job-offers/"
-            Document doc = Jsoup.connect(PageUrl).get();
-            Elements row = doc.select(".postslisttopic");
-            System.out.println(System.lineSeparator() + "Page: " + (index + 1) + System.lineSeparator());
-            for (Element td : row) {
-                Element href = td.child(0);
-                Element hrefDate = td.lastElementSibling();
-                postUrl = href.attr("href");
-                postName = href.text();
-                postDate = SqlRuParse.convertDate(hrefDate.text());
-
-                System.out.println(postUrl);
-                System.out.println(postName);
-                System.out.println(postDate);
-            }
-            index++;
-        }
-    }
-
+public class SqlRuParse implements Parse {
     public static String convertDate(String postDate) throws ParseException {
-        String modData;
+        String modDate;
         DateFormatSymbols myDateFormatSymbols = new DateFormatSymbols(){
             @Override
             public String[] getMonths() {
@@ -53,41 +24,72 @@ public class SqlRuParse {
         if (postDate.contains("сегодня")) {
             SimpleDateFormat sdf = new SimpleDateFormat("d M yyyy H:m");
             final Calendar cal = Calendar.getInstance();
-            modData = sdf.format(cal.getTime());
+            modDate = sdf.format(cal.getTime());
         } else if (postDate.contains("вчера")) {
             SimpleDateFormat sdf = new SimpleDateFormat("d M yyyy H:m");
             final Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, -1);
-            modData = sdf.format(cal.getTime());
+            modDate = sdf.format(cal.getTime());
         } else {
             Date date = new SimpleDateFormat("d MMM yy, H:m", myDateFormatSymbols).parse(postDate);
             Locale locales = Locale.getDefault();   //ru_RU
             String patterns = "d M yyyy H:m";
-            modData = new SimpleDateFormat(patterns, locales).format(date);
+            modDate = new SimpleDateFormat(patterns, locales).format(date);
         }
-        return modData;
+        return modDate;
     }
 
-    public void postDetail(String postUrl) throws IOException, ParseException {
-        Document doc = Jsoup.connect(postUrl).get();
+    @Override
+    public List<Post> list(String link) throws IOException, ParseException {
+        List<Post> posts = new ArrayList<>();
+
+        Document docPages = Jsoup.connect(link).get();
+        Elements pg = docPages.select(".sort_options").select("a");
+        int pages = 0;
+        for (Element a : pg) {
+            pages = Integer.parseInt(a.text());
+        }
+
+        int index = 0;
+        while (index < pages) {
+            String PageUrl = link + "/" + (index + 1); //"https://www.sql.ru/forum/job-offers/"
+            Document doc = Jsoup.connect(PageUrl).get();
+            Elements row = doc.select(".postslisttopic");
+            System.out.println(System.lineSeparator() + "Page: " + (index + 1) + System.lineSeparator());
+            for (Element td : row) {
+                Element href = td.child(0);
+                String postLink = href.attr("href");
+                posts.add(new SqlRuParse().detail(postLink));
+            }
+            index++;
+        }
+        return posts;
+    }
+
+    @Override
+    public Post detail(String postLink) throws IOException, ParseException {
+        Document doc = Jsoup.connect(postLink).get();
+
         String postName = doc.select(".messageHeader").get(0).text();
         String postText = doc.select("td[class='msgBody']").get(1).text();
-        String postDate = null;
-        String msgFooter = doc.select(".msgFooter").text();
-        Pattern pattern = Pattern.compile("^(\\d{1,2}\\s\\D{3}\\s\\d{1,2},\\s\\d{2}:\\d{2})");
-        Matcher matcher = pattern.matcher(msgFooter);
-        if (matcher.find()) {
-            postDate = SqlRuParse.convertDate(matcher.group());
-        }
-        System.out.println(postUrl);
+        String postDate = SqlRuParse.convertDate(doc.select(".msgFooter").text());
+
+        System.out.println(postLink);
         System.out.println(postName);
         System.out.println(postText);
         System.out.println(postDate);
+
+        Post post = new Post();
+        post.setLink(postLink);
+        post.setPostName(postName);
+        post.setPostText(postText);
+        post.setPostDate(postDate);
+        return post;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException, ParseException {
         SqlRuParse sqlParse = new SqlRuParse();
-        sqlParse.parseList("https://www.sql.ru/forum/job-offers/", 5);
-        sqlParse.postDetail("https://www.sql.ru/forum/1325330/lidy-be-fe-senior-cistemnye-analitiki-qa-i-devops-moskva-do-200t");
+        sqlParse.detail("https://www.sql.ru/forum/1329625/java-razrabotchik-sankt-peterburg");
+        sqlParse.list("https://www.sql.ru/forum/job-offers");
     }
 }

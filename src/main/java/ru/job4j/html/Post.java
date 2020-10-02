@@ -1,28 +1,40 @@
 package ru.job4j.html;
 
 public class Post {
-    private String name;
-    private String text;
+    private String postName;
+    private String postText;
     private String link;
-    private String created;
+    private String postDate;
 
-    public Post(String link) {
-        this.link = link;
+    public String getPostName() {
+        return postName;
     }
 
-    public String getName() {
-        return name;
+    public void setPostName(String postName) {
+        this.postName = postName;
     }
 
-    public String getText() {
-        return text;
+    public String getPostText() {
+        return postText;
+    }
+
+    public void setPostText(String postTtext) {
+        this.postText = postTtext;
     }
 
     public String getLink() {
         return link;
     }
 
-    public String getCreated() {
-        return created;
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getPostDate() {
+        return postDate;
+    }
+
+    public void setPostDate(String postDate) {
+        this.postDate = postDate;
     }
 }
