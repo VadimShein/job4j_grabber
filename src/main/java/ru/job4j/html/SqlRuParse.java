@@ -10,6 +10,8 @@ import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class SqlRuParse {
@@ -66,8 +68,26 @@ public class SqlRuParse {
         return modData;
     }
 
+    public void postDetail(String postUrl) throws IOException, ParseException {
+        Document doc = Jsoup.connect(postUrl).get();
+        String postName = doc.select(".messageHeader").get(0).text();
+        String postText = doc.select("td[class='msgBody']").get(1).text();
+        String postDate = null;
+        String msgFooter = doc.select(".msgFooter").text();
+        Pattern pattern = Pattern.compile("^(\\d{1,2}\\s\\D{3}\\s\\d{1,2},\\s\\d{2}:\\d{2})");
+        Matcher matcher = pattern.matcher(msgFooter);
+        if (matcher.find()) {
+            postDate = SqlRuParse.convertDate(matcher.group());
+        }
+        System.out.println(postUrl);
+        System.out.println(postName);
+        System.out.println(postText);
+        System.out.println(postDate);
+    }
+
     public static void main(String[] args) throws Exception {
         SqlRuParse sqlParse = new SqlRuParse();
         sqlParse.parseList("https://www.sql.ru/forum/job-offers/", 5);
+        sqlParse.postDetail("https://www.sql.ru/forum/1325330/lidy-be-fe-senior-cistemnye-analitiki-qa-i-devops-moskva-do-200t");
     }
 }
