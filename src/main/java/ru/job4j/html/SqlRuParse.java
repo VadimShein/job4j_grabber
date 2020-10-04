@@ -59,7 +59,7 @@ public class SqlRuParse implements Parse {
             for (Element td : row) {
                 Element href = td.child(0);
                 String postLink = href.attr("href");
-                posts.add(new SqlRuParse().detail(postLink));
+                posts.add(detail(postLink));
             }
             index++;
         }
