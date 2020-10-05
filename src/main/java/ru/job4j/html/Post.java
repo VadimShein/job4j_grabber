@@ -3,7 +3,7 @@ package ru.job4j.html;
 public class Post {
     private String postName;
     private String postText;
-    private String link;
+    private String postLink;
     private String postDate;
 
     public String getPostName() {
@@ -22,12 +22,12 @@ public class Post {
         this.postText = postTtext;
     }
 
-    public String getLink() {
-        return link;
+    public String getPostLink() {
+        return postLink;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setPostLink(String link) {
+        this.postLink = link;
     }
 
     public String getPostDate() {

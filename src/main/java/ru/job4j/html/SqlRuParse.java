@@ -33,7 +33,7 @@ public class SqlRuParse implements Parse {
         } else {
             Date date = new SimpleDateFormat("d MMM yy, H:m", myDateFormatSymbols).parse(postDate);
             Locale locales = Locale.getDefault();   //ru_RU
-            String patterns = "d M yyyy H:m";
+            String patterns = "yyyy-mm-dd hh:mm:ss";
             modDate = new SimpleDateFormat(patterns, locales).format(date);
         }
         return modDate;
@@ -80,7 +80,7 @@ public class SqlRuParse implements Parse {
         System.out.println(postDate);
 
         Post post = new Post();
-        post.setLink(postLink);
+        post.setPostLink(postLink);
         post.setPostName(postName);
         post.setPostText(postText);
         post.setPostDate(postDate);
