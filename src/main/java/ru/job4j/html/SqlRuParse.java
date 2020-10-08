@@ -22,18 +22,18 @@ public class SqlRuParse implements Parse {
             }
         };
         if (postDate.contains("сегодня")) {
-            SimpleDateFormat sdf = new SimpleDateFormat("d M yyyy H:m");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             final Calendar cal = Calendar.getInstance();
             modDate = sdf.format(cal.getTime());
         } else if (postDate.contains("вчера")) {
-            SimpleDateFormat sdf = new SimpleDateFormat("d M yyyy H:m");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             final Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, -1);
             modDate = sdf.format(cal.getTime());
         } else {
             Date date = new SimpleDateFormat("d MMM yy, H:m", myDateFormatSymbols).parse(postDate);
             Locale locales = Locale.getDefault();   //ru_RU
-            String patterns = "yyyy-mm-dd hh:mm:ss";
+            String patterns = "yyyy-MM-dd hh:mm:ss";
             modDate = new SimpleDateFormat(patterns, locales).format(date);
         }
         return modDate;
@@ -51,7 +51,7 @@ public class SqlRuParse implements Parse {
         }
 
         int index = 0;
-        while (index < pages) {
+        while (index < 10) { //pages
             String PageUrl = link + "/" + (index + 1); //"https://www.sql.ru/forum/job-offers/"
             Document doc = Jsoup.connect(PageUrl).get();
             Elements row = doc.select(".postslisttopic");
