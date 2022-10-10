@@ -32,7 +32,7 @@ public class SqlRuParse implements Parse {
             modDate = sdf.format(cal.getTime());
         } else {
             Date date = new SimpleDateFormat("d MMM yy, H:m", myDateFormatSymbols).parse(postDate);
-            Locale locales = Locale.getDefault();   //ru_RU
+            Locale locales = Locale.getDefault();
             String patterns = "yyyy-MM-dd hh:mm:ss";
             modDate = new SimpleDateFormat(patterns, locales).format(date);
         }
@@ -51,8 +51,8 @@ public class SqlRuParse implements Parse {
         }
 
         int index = 0;
-        while (index < 10) { //pages
-            String PageUrl = link + "/" + (index + 1); //"https://www.sql.ru/forum/job-offers/"
+        while (index < 10) {
+            String PageUrl = link + "/" + (index + 1);
             Document doc = Jsoup.connect(PageUrl).get();
             Elements row = doc.select(".postslisttopic");
             System.out.println(System.lineSeparator() + "Page: " + (index + 1) + System.lineSeparator());
